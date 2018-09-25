@@ -138,8 +138,29 @@ module.exports = function(
     fs.unlinkSync(templateDependenciesPath);
   }
 
+  // Install react and react-dom for backward compatibility with old CRA cli
+  // which doesn't install react and react-dom along with react-scripts
+  // or template is presetend (via --internal-testing-template)
+  if (!isReactInstalled(appPackage) || template) {
+    console.log(`Installing react and react-dom using ${command}...`);
+    console.log();
+
+    const proc = spawn.sync(command, args.concat(["react", "react-dom"]), {
+      stdio: "inherit"
+    });
+    if (proc.status !== 0) {
+      console.error(`\`${command} ${args.join(" ")}\` failed`);
+      return;
+    }
+  }
+
   console.log();
-  console.log(chalk.blue("Authenticating with HCSS"));
+  console.log(chalk.blue("writing project .npmrc"));
+  fs.writeFileSync(
+    path.join(appPath, "package.json"),
+    "registry=https://hcss.pkgs.visualstudio.com/_packaging/HCSS/npm/registry/\nalways-auth=true"
+  );
+  console.log(chalk.blue("authenticating and writing user .npmrc"));
   let refreshProc = spawn.sync("vsts-npm-auth", ["-config", ".npmrc"], {
     stdio: "inherit"
   });
@@ -167,22 +188,6 @@ module.exports = function(
         path.join(process.env.USERPROFILE, ".npmrc")
       );
       console.log(".npmrc was copied to home directory");
-    }
-  }
-
-  // Install react and react-dom for backward compatibility with old CRA cli
-  // which doesn't install react and react-dom along with react-scripts
-  // or template is presetend (via --internal-testing-template)
-  if (!isReactInstalled(appPackage) || template) {
-    console.log(`Installing react and react-dom using ${command}...`);
-    console.log();
-
-    const proc = spawn.sync(command, args.concat(["react", "react-dom"]), {
-      stdio: "inherit"
-    });
-    if (proc.status !== 0) {
-      console.error(`\`${command} ${args.join(" ")}\` failed`);
-      return;
     }
   }
 
