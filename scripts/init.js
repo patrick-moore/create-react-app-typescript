@@ -157,7 +157,7 @@ module.exports = function(
   console.log();
   console.log(chalk.blue("writing project .npmrc"));
   fs.writeFileSync(
-    path.join(appPath, "package.json"),
+    path.join(appPath, ".npmrc"),
     "registry=https://hcss.pkgs.visualstudio.com/_packaging/HCSS/npm/registry/\nalways-auth=true"
   );
   console.log(chalk.blue("authenticating and writing user .npmrc"));
