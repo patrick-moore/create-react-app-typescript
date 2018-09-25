@@ -173,7 +173,7 @@ module.exports = function(
     if (installProc.status !== 0) {
       console.log(chalk.red("Error installing vsts-npm-auth"));
     } else {
-      refreshProc = spawn.sync("node", ["refreshToken"], {
+      refreshProc = spawn.sync("vsts-npm-auth", ["-config", ".npmrc"], {
         stdio: "inherit"
       });
       if (refreshProc.status !== 0) {
