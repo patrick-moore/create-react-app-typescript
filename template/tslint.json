@@ -4,7 +4,16 @@
     "exclude": [
       "config/**/*.js",
       "node_modules/**/*.ts",
-      "coverage/lcov-report/*.js"
+      "node_modules/hcss-components/dist/components/Table/ServerSideTable.d.ts",
+      "_templates/**/*.*"
     ]
+  },
+  "rules": {
+    "interface-name": [false, "never"],
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "no-console": false,
+    "jsx-boolean-value": [true, "never"],
+    "jsx-no-lambda": false
   }
 }

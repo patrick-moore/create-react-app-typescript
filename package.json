@@ -1,8 +1,8 @@
 {
-  "name": "react-scripts-ts",
+  "name": "prm-react-scripts",
   "version": "2.17.0",
-  "description": "Configuration and scripts for Create React App.",
-  "repository": "wmonk/create-react-app",
+  "description": "PRM Configuration and scripts for Create React App.",
+  "repository": "patrick-moore/create-react-app-typescript",
   "license": "BSD-3-Clause",
   "engines": {
     "node": ">=6"
@@ -10,7 +10,13 @@
   "bugs": {
     "url": "https://github.com/wmonk/create-react-app/issues"
   },
-  "files": ["bin", "config", "scripts", "template", "utils"],
+  "files": [
+    "bin",
+    "config",
+    "scripts",
+    "template",
+    "utils"
+  ],
   "bin": {
     "react-scripts-ts": "./bin/react-scripts-ts.js"
   },
