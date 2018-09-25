@@ -40,7 +40,8 @@ module.exports = function(
     start: "react-scripts-ts start",
     build: "react-scripts-ts build",
     test: "react-scripts-ts test --env=jsdom",
-    eject: "react-scripts-ts eject"
+    eject: "react-scripts-ts eject",
+    refreshToken: "vsts-npm-auth -config .npmrc && node scripts/copyNpmrc"
   };
 
   fs.writeFileSync(
@@ -166,16 +167,6 @@ module.exports = function(
   // Change displayed command to yarn instead of yarnpkg
   const displayedCommand = useYarn ? "yarn" : "npm";
 
-  console.log(chalk.red("VERY IMPORTANT:"));
-  console.log(
-    "Create a .env file at the root of your project with REACT_APP_EMPLOYEE_ID and REACT_APP_POSITION_ID"
-  );
-  console.log(
-    "  You can find these values in the company dashboard under application settings."
-  );
-  console.log("  https://company.bamboohr.com/settings");
-  console.log();
-
   console.log();
   console.log(`Success! Created ${appName} at ${appPath}`);
   console.log("Inside that directory, you can run several commands:");
@@ -215,6 +206,25 @@ module.exports = function(
   }
   console.log();
   console.log("Happy hacking!");
+
+  console.log(chalk.red("Authenticating with HCSS"));
+
+  const refreshProc = spawn.sync("node", ["refreshToken"], {
+    stdio: "inherit"
+  });
+  if (refreshProc.status !== 0) {
+    console.log(chalk.red("Error Authenticating"));
+    console.log(chalk.red("Installing vsts-npm-auth globally"));
+    const installProc = spawn.sync("npm", ["install", "vsts-npm-auth", "-g"], {
+      stdio: "inherit"
+    });
+    if (installProc.status === 0) {
+      refreshProc = spawn.sync("node", ["refreshToken"], {
+        stdio: "inherit"
+      });
+    }
+    return;
+  }
 };
 
 function isReactInstalled(appPackage) {
