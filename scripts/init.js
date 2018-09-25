@@ -138,6 +138,38 @@ module.exports = function(
     fs.unlinkSync(templateDependenciesPath);
   }
 
+  console.log();
+  console.log(chalk.blue("Authenticating with HCSS"));
+  let refreshProc = spawn.sync("vsts-npm-auth", ["-config", ".npmrc"], {
+    stdio: "inherit"
+  });
+  if (refreshProc.status !== 0) {
+    console.log(chalk.red("Error Authenticating"));
+    console.log(chalk.red("Installing vsts-npm-auth globally"));
+    const installProc = spawn.sync("npm", ["install", "vsts-npm-auth", "-g"], {
+      stdio: "inherit"
+    });
+    if (installProc.status !== 0) {
+      console.log(chalk.red("Error installing vsts-npm-auth"));
+    } else {
+      refreshProc = spawn.sync("node", ["refreshToken"], {
+        stdio: "inherit"
+      });
+      if (refreshProc.status !== 0) {
+        console.log(chalk.red("Error creating npmrc token"));
+      }
+    }
+  }
+  if (refreshProc.status !== 0) {
+    if (process.platform == "win32") {
+      fs.copyFileSync(
+        path.join(process.env.HOMEDRIVE, ".npmrc"),
+        path.join(process.env.USERPROFILE, ".npmrc")
+      );
+      console.log(".npmrc was copied to home directory");
+    }
+  }
+
   // Install react and react-dom for backward compatibility with old CRA cli
   // which doesn't install react and react-dom along with react-scripts
   // or template is presetend (via --internal-testing-template)
@@ -206,25 +238,6 @@ module.exports = function(
   }
   console.log();
   console.log("Happy hacking!");
-
-  console.log(chalk.red("Authenticating with HCSS"));
-
-  const refreshProc = spawn.sync("node", ["refreshToken"], {
-    stdio: "inherit"
-  });
-  if (refreshProc.status !== 0) {
-    console.log(chalk.red("Error Authenticating"));
-    console.log(chalk.red("Installing vsts-npm-auth globally"));
-    const installProc = spawn.sync("npm", ["install", "vsts-npm-auth", "-g"], {
-      stdio: "inherit"
-    });
-    if (installProc.status === 0) {
-      refreshProc = spawn.sync("node", ["refreshToken"], {
-        stdio: "inherit"
-      });
-    }
-    return;
-  }
 };
 
 function isReactInstalled(appPackage) {
