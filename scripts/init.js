@@ -160,7 +160,7 @@ module.exports = function(
       }
     }
   }
-  if (refreshProc.status !== 0) {
+  if (refreshProc.status === 0) {
     if (process.platform == "win32") {
       fs.copyFileSync(
         path.join(process.env.HOMEDRIVE, ".npmrc"),
